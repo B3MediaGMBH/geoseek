@@ -3,31 +3,55 @@ import { FreeCheckRequest, FreeCheckResult } from "@/lib/types";
 import { queryGemini } from "@/lib/gemini";
 import { generateMockData } from "@/lib/mock-data";
 
+const VALID_INDUSTRIES = [
+  "Maler & Lackierer",
+  "Elektriker",
+  "Klempner / Sanitär",
+  "Zahnarzt",
+  "Anwalt",
+  "Steuerberater",
+  "Restaurant",
+  "Immobilienmakler",
+  "Friseur",
+  "IT-Dienstleister / Agentur",
+  "Dachdecker",
+  "Schreiner / Tischler",
+  "Physiotherapeut",
+  "Tierarzt",
+  "Optiker",
+  "Apotheke",
+  "Fahrschule",
+  "Fotograf",
+  "Architekt",
+  "Reinigungsfirma",
+  "Umzugsunternehmen",
+  "Schlüsseldienst",
+  "Autowerkstatt / KFZ",
+  "Bäckerei / Konditorei",
+  "Hotel / Pension",
+];
+
 function getRecommendations(score: number): string[] {
   if (score >= 60) {
     return [
-      "Dein Unternehmen wird bereits von KI empfohlen — gute Ausgangslage!",
-      "Optimiere deine Website-Strukturdaten (Schema.org) für noch bessere KI-Erkennung.",
-      "Sammle aktiv Google-Bewertungen — KI-Modelle gewichten diese stark.",
-      "Erstelle einen FAQ-Bereich auf deiner Website mit häufigen Kundenfragen.",
+      "🌐 Aktualisiere deine Website — Die KI liest deine Website. Wenn dort aktuelle Infos stehen, wirst du eher empfohlen.",
+      "⭐ Sammle Google-Bewertungen — Mehr 5-Sterne-Bewertungen = bessere KI-Empfehlung.",
+      "📱 Pflege dein Google Business Profil — Öffnungszeiten, Fotos, Beschreibung aktuell halten.",
     ];
   }
   if (score >= 30) {
     return [
-      "Dein Unternehmen taucht nur teilweise in KI-Antworten auf — hier gibt es Potenzial.",
-      "Erstelle hochwertigen Content zu deiner Branche und deinem Standort.",
-      "Pflege dein Google Business Profil vollständig — inkl. Öffnungszeiten, Fotos, Beschreibung.",
-      "Baue lokale Backlinks auf (Branchenverzeichnisse, lokale Presse).",
-      "Fordere zufriedene Kunden aktiv zu Bewertungen auf.",
+      "🌐 Aktualisiere deine Website — Die KI liest deine Website. Wenn dort aktuelle Infos stehen, wirst du eher empfohlen.",
+      "⭐ Sammle Google-Bewertungen — Mehr 5-Sterne-Bewertungen = bessere KI-Empfehlung.",
+      "📝 Lass dich in Branchenverzeichnisse eintragen — Die KI nutzt diese als Quelle.",
+      "📱 Pflege dein Google Business Profil — Öffnungszeiten, Fotos, Beschreibung aktuell halten.",
     ];
   }
   return [
-    "Dein Unternehmen wird von KI-Systemen aktuell nicht empfohlen — dringender Handlungsbedarf!",
-    "Erstelle oder optimiere dein Google Business Profil mit vollständigen Informationen.",
-    "Baue eine professionelle Website mit lokalen Keywords und Strukturdaten auf.",
-    "Starte eine Bewertungs-Kampagne — Unternehmen ohne Bewertungen werden von KI ignoriert.",
-    "Trage dich in relevante Branchenverzeichnisse ein (z.B. Das Örtliche, Gelbe Seiten).",
-    "Erstelle regelmäßig Inhalte (Blog, FAQ) die zeigen, dass dein Unternehmen aktiv ist.",
+    "🌐 Aktualisiere deine Website — Die KI liest deine Website. Wenn dort aktuelle Infos stehen, wirst du eher empfohlen.",
+    "⭐ Sammle Google-Bewertungen — Mehr 5-Sterne-Bewertungen = bessere KI-Empfehlung.",
+    "📝 Lass dich in Branchenverzeichnisse eintragen — Die KI nutzt diese als Quelle.",
+    "📱 Pflege dein Google Business Profil — Öffnungszeiten, Fotos, Beschreibung aktuell halten.",
   ];
 }
 
@@ -46,6 +70,14 @@ export async function POST(request: NextRequest) {
     if (body.companyName.length > 100 || body.city.length > 100) {
       return NextResponse.json(
         { error: "Eingaben sind zu lang." },
+        { status: 400 }
+      );
+    }
+
+    // Validate industry
+    if (!VALID_INDUSTRIES.includes(body.industry)) {
+      return NextResponse.json(
+        { error: "Bitte wähle eine gültige Branche aus." },
         { status: 400 }
       );
     }

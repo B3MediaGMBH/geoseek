@@ -14,6 +14,21 @@ const INDUSTRIES = [
   "Immobilienmakler",
   "Friseur",
   "IT-Dienstleister / Agentur",
+  "Dachdecker",
+  "Schreiner / Tischler",
+  "Physiotherapeut",
+  "Tierarzt",
+  "Optiker",
+  "Apotheke",
+  "Fahrschule",
+  "Fotograf",
+  "Architekt",
+  "Reinigungsfirma",
+  "Umzugsunternehmen",
+  "Schlüsseldienst",
+  "Autowerkstatt / KFZ",
+  "Bäckerei / Konditorei",
+  "Hotel / Pension",
 ];
 
 /* ─── Check Modal ─── */
@@ -505,6 +520,10 @@ function Branchen() {
     { icon: "🏠", name: "Immobilienmakler", sub: "" },
     { icon: "💇", name: "Friseure & Kosmetik", sub: "" },
     { icon: "💻", name: "IT-Dienstleister & Agenturen", sub: "" },
+    { icon: "🐾", name: "Tierärzte", sub: "" },
+    { icon: "🚗", name: "Autowerkstätten", sub: "" },
+    { icon: "🏗️", name: "Architekten", sub: "" },
+    { icon: "📸", name: "Fotografen", sub: "" },
   ];
   return (
     <section id="branchen" className="py-20 md:py-28">
@@ -524,6 +543,9 @@ function Branchen() {
             </div>
           ))}
         </div>
+        <p className="text-center text-muted mt-6 text-sm">
+          … und 13 weitere Branchen wie Physiotherapeuten, Optiker, Apotheken, Fahrschulen, Bäckereien, Hotels und mehr.
+        </p>
       </div>
     </section>
   );

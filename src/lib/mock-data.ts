@@ -1,5 +1,44 @@
 import { FreeCheckResult, PromptResult } from "./types";
 
+// Realistic competitor names per industry
+const INDUSTRY_COMPETITORS: Record<string, string[]> = {
+  "Maler & Lackierer": ["Malerbetrieb Hofmann", "Farbe & Design Krause", "Maler Bergmann GmbH", "Krüger Malerarbeiten", "Malermeister Hartmann"],
+  "Elektriker": ["Elektro Bauer GmbH", "Strom & Licht Schäfer", "Elektrotechnik Werner", "E-Service König", "Elektro Zimmermann"],
+  "Klempner / Sanitär": ["Sanitär Hoffmann", "Rohrtechnik Schröder", "Haustechnik Braun", "SHK Meisterbetrieb Wolf", "Sanitär & Heizung Fuchs"],
+  "Zahnarzt": ["Zahnarztpraxis Dr. Hoffmann", "Dental Zentrum am Markt", "Praxis Dr. Bergmann", "Zahnmedizin Dr. Klein", "Zahnarzt Dr. Roth"],
+  "Anwalt": ["Kanzlei Hoffmann & Partner", "Rechtsanwälte Bergmann", "Anwaltsbüro Dr. Krause", "Kanzlei Schäfer", "RA Dr. Lehmann"],
+  "Steuerberater": ["Steuerkanzlei Hoffmann", "Steuerberatung Braun & Partner", "ETL Steuerberatung", "Kanzlei Schröder", "Steuerberater Richter"],
+  "Restaurant": ["Gasthaus Zum Goldenen Hirsch", "Ristorante Da Luigi", "Landgasthof Mühlbach", "Restaurant Seeblick", "Wirtshaus am Dom"],
+  "Immobilienmakler": ["Immobilien Hoffmann", "Engel & Völkers", "RE/MAX Immobilien", "Von Poll Immobilien", "Immo-Service Braun"],
+  "Friseur": ["Hair Design Studio", "Salon Haargenau", "Friseur Kopfsache", "Salon Elegance", "Haarstudio Trend"],
+  "IT-Dienstleister / Agentur": ["Digital Solutions GmbH", "WebTech Agentur", "IT-Service Braun", "NetWorks IT", "CodeCraft Digital"],
+  "Dachdecker": ["Dachdeckerei Hoffmann", "Dach & Fassade Braun", "Meisterbetrieb Schäfer Dach", "Dachtechnik Werner", "Dachdecker Krause"],
+  "Schreiner / Tischler": ["Tischlerei Hoffmann", "Schreinerei Braun", "Holzwerkstatt Weber", "Möbelmanufaktur Schäfer", "Tischlermeister Krause"],
+  "Physiotherapeut": ["Physiotherapie Am Park", "Praxis Bewegungswelt", "PhysioVital Zentrum", "Therapiezentrum Hoffmann", "Physio Aktiv"],
+  "Tierarzt": ["Tierarztpraxis Dr. Hoffmann", "Kleintierpraxis Am Stadtpark", "Tierklinik Braun", "Veterinärpraxis Dr. Schäfer", "Tierarzt Dr. Krause"],
+  "Optiker": ["Optik Hoffmann", "Brillenstudio Am Markt", "Fielmann", "Apollo Optik", "Augenoptik Braun"],
+  "Apotheke": ["Stadtapotheke Am Markt", "Löwen-Apotheke", "Adler-Apotheke", "Rathaus-Apotheke", "Sonnen-Apotheke"],
+  "Fahrschule": ["Fahrschule Hoffmann", "Fahrschule Am Start", "Fahrschule Easy Drive", "Fahrschule Braun", "Fahrschule Grünes Licht"],
+  "Fotograf": ["Fotostudio Hoffmann", "Lichtblick Fotografie", "Bildschön Studio", "Foto Krause", "Momentaufnahme Fotografie"],
+  "Architekt": ["Architekturbüro Hoffmann", "Planwerk Architekten", "Braun & Partner Architekten", "Architekten Schäfer", "Baukunst Architektur"],
+  "Reinigungsfirma": ["Clean Team GmbH", "Gebäudereinigung Hoffmann", "Sauber & Rein Service", "Reinigungsservice Braun", "Blitz Blank GmbH"],
+  "Umzugsunternehmen": ["Umzüge Hoffmann", "Zapf Umzüge", "Umzugsprofis Express", "Braun Transporte", "Easy Move Umzüge"],
+  "Schlüsseldienst": ["Schlüsseldienst Hoffmann 24h", "Aufsperrdienst Express", "Schlüssel-Fuchs", "24h Schlüsselnotdienst Braun", "Sicher & Schnell Schlüsseldienst"],
+  "Autowerkstatt / KFZ": ["Auto Hoffmann GmbH", "KFZ-Meisterbetrieb Braun", "Autoservice am Bahnhof", "Werkstatt Schäfer", "KFZ-Technik Werner"],
+  "Bäckerei / Konditorei": ["Bäckerei Hoffmann", "Landbäckerei Braun", "Backstube Am Markt", "Konditorei Süßes Eck", "Bäckermeister Krause"],
+  "Hotel / Pension": ["Hotel Am Stadtpark", "Pension Sonnenhof", "Landhotel Zur Post", "Hotel Braun", "Gasthof Goldener Stern"],
+};
+
+function getCompetitorsForIndustry(industry: string): string[] {
+  return INDUSTRY_COMPETITORS[industry] || [
+    "Fachbetrieb Hoffmann",
+    "Meisterbetrieb Braun",
+    "Service Schäfer GmbH",
+    "Betrieb Werner & Co.",
+    "Qualitätsservice Krause",
+  ];
+}
+
 export function generateMockData(
   companyName: string,
   industry: string,
@@ -13,13 +52,7 @@ export function generateMockData(
     `Welcher ${industry} in ${city} hat die besten Bewertungen?`,
   ];
 
-  const mockCompetitors = [
-    `${industry} Schmidt`,
-    `${industry} Müller`,
-    `${industry} Weber`,
-    `${industry} Fischer`,
-    `Top ${industry} ${city}`,
-  ];
+  const mockCompetitors = getCompetitorsForIndustry(industry);
 
   // Simulate: company mentioned in 2 out of 5 prompts
   const mockPromptResults: PromptResult[] = prompts.map((prompt, i) => {
@@ -56,7 +89,7 @@ export function generateMockData(
     .map(([name, count]) => ({ name, count }))
     .sort((a, b) => b.count - a.count);
 
-  // Calculate score: mention_rate (50%) + position bonus (30%) + sentiment bonus (20%)
+  // Calculate score
   const avgPosition =
     mockPromptResults
       .filter((p) => p.position !== null)
@@ -79,35 +112,7 @@ export function generateMockData(
     mention_rate: mentionRate,
     prompts: mockPromptResults,
     competitors,
-    recommendations: getRecommendations(overall_score),
+    recommendations: [], // Not used anymore - results page has its own tips
     platform: "Gemini",
   };
-}
-
-function getRecommendations(score: number): string[] {
-  if (score >= 60) {
-    return [
-      "Dein Unternehmen wird bereits von KI empfohlen — gute Ausgangslage!",
-      "Optimiere deine Website-Strukturdaten (Schema.org) für noch bessere KI-Erkennung.",
-      "Sammle aktiv Google-Bewertungen — KI-Modelle gewichten diese stark.",
-      "Erstelle einen FAQ-Bereich auf deiner Website mit häufigen Kundenfragen.",
-    ];
-  }
-  if (score >= 30) {
-    return [
-      "Dein Unternehmen taucht nur teilweise in KI-Antworten auf — hier gibt es Potenzial.",
-      "Erstelle hochwertigen Content zu deiner Branche und deinem Standort.",
-      "Pflege dein Google Business Profil vollständig — inkl. Öffnungszeiten, Fotos, Beschreibung.",
-      "Baue lokale Backlinks auf (Branchenverzeichnisse, lokale Presse).",
-      "Fordere zufriedene Kunden aktiv zu Bewertungen auf.",
-    ];
-  }
-  return [
-    "Dein Unternehmen wird von KI-Systemen aktuell nicht empfohlen — dringender Handlungsbedarf!",
-    "Erstelle oder optimiere dein Google Business Profil mit vollständigen Informationen.",
-    "Baue eine professionelle Website mit lokalen Keywords und Strukturdaten auf.",
-    "Starte eine Bewertungs-Kampagne — Unternehmen ohne Bewertungen werden von KI ignoriert.",
-    "Trage dich in relevante Branchenverzeichnisse ein (z.B. Das Örtliche, Gelbe Seiten).",
-    "Erstelle regelmäßig Inhalte (Blog, FAQ) die zeigen, dass dein Unternehmen aktiv ist.",
-  ];
 }
